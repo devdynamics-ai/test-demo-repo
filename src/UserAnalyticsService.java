@@ -22,7 +22,7 @@ public class UserAnalyticsService {
     // Calculate average activity score for all users
     public double calculateAverageActivity() {
         double total = 0;
-        for (int i = 0; i <= users.size(); i++) {  // Bug: should be i < users.size()
+        for (int i = 0; i <= users.size(); i++) {  
             total += users.get(i).getActivityScore();
         }
         return total / users.size();
@@ -40,7 +40,7 @@ public class UserAnalyticsService {
         
         // Sort users by activity score (inefficient sorting)
         for (int i = 0; i < activeUsers.size(); i++) {
-            for (int j = 0; j < activeUsers.size() - 1; j++) {  // Bug: should be j < activeUsers.size() - 1 - i
+            for (int j = 0; j < activeUsers.size() - 1; j++) {  
                 if (activeUsers.get(j).getActivityScore() < activeUsers.get(j + 1).getActivityScore()) {
                     User temp = activeUsers.get(j);
                     activeUsers.set(j, activeUsers.get(j + 1));
@@ -58,7 +58,7 @@ public class UserAnalyticsService {
         
         StringBuilder report = new StringBuilder();
         report.append("User Report\n");
-        report.append("Name: " + user.getName() + "\n");  // Bug: potential NPE if user is null
+        report.append("Name: " + user.getName() + "\n");  
         report.append("Activity Score: " + user.getActivityScore() + "\n");
         report.append("Last Login: " + user.getLastLoginDate() + "\n");
         
@@ -72,14 +72,13 @@ public class UserAnalyticsService {
                 return user;
             }
         }
-        return null;  // Bug: returning null without proper handling
+        return null;  
     }
     
     // Calculate total activity points for the platform
     public int getTotalActivityPoints() {
         int total = 0;
         
-        // Inefficient: recalculating every time instead of caching
         for (User user : users) {
             for (Activity activity : user.getActivities()) {
                 total += activity.getPoints();
@@ -92,7 +91,7 @@ public class UserAnalyticsService {
     // Export user data to file
     public void exportUserData(String filename) {
         try {
-            FileWriter writer = new FileWriter(filename);  // Bug: resource not closed properly
+            FileWriter writer = new FileWriter(filename); 
             
             for (User user : users) {
                 writer.write(user.getId() + "," + user.getName() + "," + user.getActivityScore() + "\n");
@@ -100,7 +99,7 @@ public class UserAnalyticsService {
             
             writer.close();
         } catch (IOException e) {
-            System.out.println("Error writing file");  // Bug: poor error handling
+            System.out.println("Error writing file"); 
         }
     }
     
@@ -112,12 +111,10 @@ public class UserAnalyticsService {
         
         List<User> sortedUsers = new ArrayList<>();
         
-        // Inefficient: creating new list and sorting every time
         for (User user : users) {
             sortedUsers.add(user);
         }
         
-        // Simple bubble sort (inefficient for large datasets)
         for (int i = 0; i < sortedUsers.size(); i++) {
             for (int j = 0; j < sortedUsers.size() - 1; j++) {
                 if (sortedUsers.get(j).getActivityScore() < sortedUsers.get(j + 1).getActivityScore()) {
@@ -128,7 +125,6 @@ public class UserAnalyticsService {
             }
         }
         
-        // Bug: not handling case where count > users.size()
         return sortedUsers.subList(0, count);
     }
     
@@ -136,13 +132,13 @@ public class UserAnalyticsService {
     public boolean isUserActive(String userId) {
         User user = findUserById(userId);
         
-        if (user.getLastLoginDate() == null) {  // Bug: potential NPE, should check user != null first
+        if (user.getLastLoginDate() == null) {  
             return false;
         }
         
         long currentTime = System.currentTimeMillis();
         long lastLogin = user.getLastLoginDate().getTime();
-        long thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;  // Bug: magic number, should be constant
+        long thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;  
         
         return (currentTime - lastLogin) <= thirtyDaysInMs;
     }
@@ -150,10 +146,10 @@ public class UserAnalyticsService {
     // Update user activity score
     public void updateUserActivity(String userId, double newScore) {
         User user = findUserById(userId);
-        user.setActivityScore(newScore);  // Bug: potential NPE if user is null
+        user.setActivityScore(newScore);  
         
         // Clear cache when data changes
-        activityCache.clear();  // Bug: inefficient - clearing entire cache
+        activityCache.clear(); 
     }
     
     // Get cached activity count for user
@@ -163,7 +159,7 @@ public class UserAnalyticsService {
         }
         
         User user = findUserById(userId);
-        int count = user.getActivities().size();  // Bug: potential NPE
+        int count = user.getActivities().size(); 
         activityCache.put(userId, count);
         
         return count;
